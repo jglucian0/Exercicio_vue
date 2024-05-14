@@ -1,25 +1,44 @@
 <script setup>
-const props = defineProps(['primaryNumber', 'secondNumber', 'calculateResult', 'mathOperation', 'result'])
+import { reactive } from 'vue';
+
+const estado = reactive({
+  primaryNumber: '',
+  secondNumber: '',
+  operations: {
+    add: (a, b) => a + b,
+    subtract: (a, b) => a - b,
+    multiply: (a, b) => a * b,
+    divide: (a, b) => (b !== 0 ? a / b : "The result doesn't exist"),
+  },
+  result: '0',
+  mathOperation: 'add',
+})
+
+const calculateResult = () => {
+  const { primaryNumber, secondNumber, mathOperation } = estado;
+  estado.result = estado.operations[mathOperation](parseFloat(primaryNumber), parseFloat(secondNumber));
+}
 </script>
 
 <template>
+
   <body>
     <div class="container">
       <div class="calculator">
-        <input v-model="props.primaryNumber" @input="props.calculateResult" type="number"
+        <input v-model="estado.primaryNumber" @input="calculateResult" type="number"
           placeholder="Digite o primeiro número">
 
-        <select v-model="props.mathOperation" @change="props.calculateResult">
+        <select v-model="estado.mathOperation" @change="calculateResult">
           <option value="add">+</option>
           <option value="subtract">-</option>
           <option value="multiply">*</option>
           <option value="divide">/</option>
         </select>
 
-        <input v-model="props.secondNumber" @input="props.calculateResult" type="number"
+        <input v-model="estado.secondNumber" @input="calculateResult" type="number"
           placeholder="Digite o segundo número">
 
-        <p class="result">Resultado: {{ props.result }}</p>
+        <p class="result">Resultado: {{ estado.result }}</p>
       </div>
     </div>
   </body>
